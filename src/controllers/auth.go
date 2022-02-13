@@ -6,8 +6,8 @@ import (
 
 	gin "github.com/gin-gonic/gin"
 
-	Requests "NoteKeeperAPI/src/controllers/requests"
 	Services "NoteKeeperAPI/src/services"
+	Requests "NoteKeeperAPI/src/types/requests"
 )
 
 type AuthController struct {
@@ -25,8 +25,8 @@ func (v AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(req)
+	User := v.Service.Register(req)
+	fmt.Println(User)
 
-	// User := v.Service.Register(UserData)
 	c.JSON(http.StatusOK, req)
 }
