@@ -1,5 +1,7 @@
 package services
 
-func GetNotes() string {
+type NotesService struct{}
+
+func (v NotesService) GetNotes() string {
 	return "ABCDDDDD JSJS"
 }

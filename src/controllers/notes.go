@@ -8,6 +8,10 @@ import (
 	Services "NoteKeeperAPI/src/services"
 )
 
-func GetNotes(c *gin.Context) {
-	c.JSON(http.StatusOK, Services.GetNotes())
+type NotesController struct {
+	Service Services.NotesService
+}
+
+func (v NotesController) GetNotes(c *gin.Context) {
+	c.JSON(http.StatusOK, v.Service.GetNotes())
 }
