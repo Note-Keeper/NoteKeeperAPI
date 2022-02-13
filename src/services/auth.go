@@ -2,10 +2,8 @@ package services
 
 import (
 	context "context"
-	fmt "fmt"
 	time "time"
 
-	validator "github.com/go-playground/validator/v10"
 	bson "go.mongodb.org/mongo-driver/bson"
 	mongo "go.mongodb.org/mongo-driver/mongo"
 
@@ -16,7 +14,6 @@ import (
 )
 
 var AccountCollection *mongo.Collection = Database.GetCollection(Database.DB, "accounts")
-var Validate = validator.New()
 
 type AuthService struct{}
 
@@ -24,7 +21,7 @@ func (v AuthService) Register(userData Requests.Register) Requests.Register {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	newUser, err := AccountCollection.InsertOne(ctx, bson.D{
+	_, err := AccountCollection.InsertOne(ctx, bson.D{
 		{Key: "Name", Value: userData.Name},
 		{Key: "Email", Value: userData.Email},
 		{Key: "Login", Value: userData.Login},
@@ -32,7 +29,18 @@ func (v AuthService) Register(userData Requests.Register) Requests.Register {
 	})
 	Helpers.PrintError(err)
 
-	fmt.Println(newUser)
-
 	return userData
+}
+
+func (v AuthService) ValidateRegister(userData Requests.Register) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	checkEmail, err := AccountCollection.CountDocuments(ctx, bson.M{"Email": userData.Email})
+	Helpers.PrintError(err)
+
+	checkLogin, err := AccountCollection.CountDocuments(ctx, bson.M{"Login": userData.Login})
+	Helpers.PrintError(err)
+
+	return checkEmail == 0 && checkLogin == 0
 }
