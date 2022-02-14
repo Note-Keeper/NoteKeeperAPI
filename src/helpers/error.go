@@ -9,7 +9,7 @@ import (
 
 func PrintError(err error) {
 	if Config.Mode == "DEV" && err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 
 	Controllers "NoteKeeperAPI/src/controllers"
 	Database "NoteKeeperAPI/src/database"
+	Middlewares "NoteKeeperAPI/src/middlewares"
 )
 
 func CreateServer() *gin.Engine {
@@ -16,10 +17,14 @@ func CreateServer() *gin.Engine {
 	R.Use(cors.Default())
 	R.SetTrustedProxies([]string{"192.168.1.2"})
 
+	R.Use(Middlewares.ParseBody)
+
 	AuthRoutes := R.Group("/auth")
 	{
 		var Controller Controllers.AuthController
 		AuthRoutes.POST("/register", Controller.Register)
+		AuthRoutes.POST("login", Controller.Login)
+		AuthRoutes.POST("logout", Controller.Logout)
 	}
 
 	NoteRoutes := R.Group("/notes")
