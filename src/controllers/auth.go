@@ -40,7 +40,7 @@ func (v AuthController) Register(c *gin.Context) {
 	Token := v.Service.CreateToken(req)
 
 	c.SetCookie("jwt", Token, Config.JWT_ExpiresIn, "/", Config.Host, false, false)
-	c.JSON(http.StatusOK, Token)
+	c.JSON(http.StatusCreated, Token)
 }
 
 func (v AuthController) Login(c *gin.Context) {
