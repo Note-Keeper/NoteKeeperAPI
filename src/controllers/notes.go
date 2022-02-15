@@ -5,7 +5,9 @@ import (
 
 	gin "github.com/gin-gonic/gin"
 
+	Helpers "NoteKeeperAPI/src/helpers"
 	Services "NoteKeeperAPI/src/services"
+	Requests "NoteKeeperAPI/src/types/requests"
 )
 
 type NotesController struct {
@@ -35,7 +37,30 @@ func (v NotesController) GetSingleNote(c *gin.Context) {
 	c.JSON(http.StatusOK, Note)
 }
 
-func (v NotesController) CreateNote(c *gin.Context) {}
+func (v NotesController) CreateNote(c *gin.Context) {
+	var req Requests.CreateNote
+
+	err := c.ShouldBindJSON(&req)
+	Helpers.PrintError(err)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	Note := v.Service.CreateNote(req)
+
+	if Note == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid_data",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, req)
+}
 
 func (v NotesController) UpdateNote(c *gin.Context) {
 	NoteID := c.Param("id")

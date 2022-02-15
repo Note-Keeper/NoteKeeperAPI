@@ -11,6 +11,7 @@ import (
 	Database "NoteKeeperAPI/src/database"
 	Models "NoteKeeperAPI/src/database/models"
 	Helpers "NoteKeeperAPI/src/helpers"
+	Requests "NoteKeeperAPI/src/types/requests"
 )
 
 var NoteCollection *mongo.Collection = Database.GetCollection(Database.DB, "notes")
@@ -46,6 +47,30 @@ func (v NotesService) GetSingleNote(NoteID string) *Models.Note {
 	if err == mongo.ErrNoDocuments {
 		return nil
 	}
+
+	return &note
+}
+
+func (v NotesService) CreateNote(noteData Requests.CreateNote) *Models.Note {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var note Models.Note
+
+	UserID, err := primitive.ObjectIDFromHex(noteData.Author)
+	Helpers.PrintError(err)
+
+	checkAccount, err := AccountCollection.CountDocuments(ctx, bson.M{"_id": UserID})
+	if err != nil || checkAccount == 0 {
+		return nil
+	}
+
+	_, err = NoteCollection.InsertOne(ctx, bson.D{
+		{Key: "Title", Value: noteData.Title},
+		{Key: "Content", Value: noteData.Content},
+		{Key: "Author", Value: noteData.Author},
+	})
+	Helpers.PrintError(err)
 
 	return &note
 }
