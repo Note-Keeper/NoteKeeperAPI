@@ -29,8 +29,8 @@ func CreateServer() *gin.Engine {
 	{
 		var Controller Controllers.NotesController
 
-		NoteRoutes.GET("/:id/all", Controller.GetNotes)  // ID - User ID
-		NoteRoutes.GET("/:id", Controller.GetSingleNote) // ID - Note ID
+		NoteRoutes.GET("/:id/all", Controller.GetNotes)
+		NoteRoutes.GET("/:id", Controller.GetSingleNote)
 		NoteRoutes.POST("/", Controller.CreateNote)
 		NoteRoutes.PUT("/:id", Controller.UpdateNote)
 		NoteRoutes.DELETE("/:id", Controller.DeleteNote)

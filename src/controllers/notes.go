@@ -21,7 +21,18 @@ func (v NotesController) GetNotes(c *gin.Context) {
 
 func (v NotesController) GetSingleNote(c *gin.Context) {
 	NoteID := c.Param("id")
-	c.JSON(http.StatusOK, NoteID)
+
+	Note := v.Service.GetSingleNote(NoteID)
+
+	if Note == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid_data",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, Note)
 }
 
 func (v NotesController) CreateNote(c *gin.Context) {}

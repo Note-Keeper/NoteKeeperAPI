@@ -5,6 +5,7 @@ import (
 	time "time"
 
 	bson "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongo "go.mongodb.org/mongo-driver/mongo"
 
 	Database "NoteKeeperAPI/src/database"
@@ -31,4 +32,20 @@ func (v NotesService) GetNotes(UserID string) []Models.Note {
 	Helpers.PrintError(err)
 
 	return notes
+}
+
+func (v NotesService) GetSingleNote(NoteID string) *Models.Note {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ID, err := primitive.ObjectIDFromHex(NoteID)
+	Helpers.PrintError(err)
+
+	var note Models.Note
+	err = NoteCollection.FindOne(ctx, bson.M{"_id": ID}).Decode(&note)
+	if err == mongo.ErrNoDocuments {
+		return nil
+	}
+
+	return &note
 }
