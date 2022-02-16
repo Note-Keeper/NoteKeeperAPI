@@ -6,6 +6,7 @@ import (
 
 	Controllers "NoteKeeperAPI/src/controllers"
 	Database "NoteKeeperAPI/src/database"
+	Middlewares "NoteKeeperAPI/src/middlewares"
 )
 
 func CreateServer() *gin.Engine {
@@ -29,9 +30,11 @@ func CreateServer() *gin.Engine {
 	{
 		var Controller Controllers.NotesController
 
+		NoteRoutes.Use(Middlewares.UseAuthorization)
+
 		NoteRoutes.GET("/:id/all", Controller.GetNotes)  // User
 		NoteRoutes.GET("/:id", Controller.GetSingleNote) // Note
-		NoteRoutes.POST("/", Controller.CreateNote)      // -- None!
+		NoteRoutes.POST("/:id", Controller.CreateNote)   // User
 		NoteRoutes.PUT("/:id", Controller.UpdateNote)    // Note
 		NoteRoutes.DELETE("/:id", Controller.DeleteNote) // Note
 	}
