@@ -32,11 +32,11 @@ func CreateServer() *gin.Engine {
 
 		NoteRoutes.Use(Middlewares.UseAuthorization)
 
-		NoteRoutes.GET("/:id/all", Controller.GetNotes)  // User
-		NoteRoutes.GET("/:id", Controller.GetSingleNote) // Note
-		NoteRoutes.POST("/:id", Controller.CreateNote)   // User
-		NoteRoutes.PUT("/:id", Controller.UpdateNote)    // Note
-		NoteRoutes.DELETE("/:id", Controller.DeleteNote) // Note
+		NoteRoutes.GET("/:id/all", Controller.GetNotes)
+		NoteRoutes.GET("/:id/:note", Controller.GetSingleNote)
+		NoteRoutes.POST("/:id", Controller.CreateNote)
+		NoteRoutes.PUT("/:id/:note", Controller.UpdateNote)
+		NoteRoutes.DELETE("/:id/:note", Controller.DeleteNote)
 	}
 
 	return R

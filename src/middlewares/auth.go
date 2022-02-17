@@ -18,6 +18,16 @@ func UseAuthorization(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "unauthorized",
 		})
+		c.Abort()
+
+		return
+	}
+
+	if AuthHeader[0] == "" || !strings.Contains(AuthHeader[0], " ") || strings.Split(AuthHeader[0], " ")[0] != "token" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid_token",
+		})
+		c.Abort()
 
 		return
 	}
@@ -32,6 +42,15 @@ func UseAuthorization(c *gin.Context) {
 		return []byte(Config.JWT_Secret), nil
 	})
 
+	if token == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "invalid_token",
+		})
+		c.Abort()
+
+		return
+	}
+
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		JWT_ID := claims["data"].(map[string]interface{})["_id"]
 		PARAM_ID := c.Param("id")
@@ -40,8 +59,18 @@ func UseAuthorization(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "unauthorized",
 			})
+			c.Abort()
+
+			return
 		}
 
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+		c.Abort()
+
+		return
 	}
 
 	c.Next()

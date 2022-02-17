@@ -22,7 +22,7 @@ func (v NotesController) GetNotes(c *gin.Context) {
 }
 
 func (v NotesController) GetSingleNote(c *gin.Context) {
-	NoteID := c.Param("id")
+	NoteID := c.Param("note")
 
 	Note := v.Service.GetSingleNote(NoteID)
 
@@ -63,11 +63,11 @@ func (v NotesController) CreateNote(c *gin.Context) {
 }
 
 func (v NotesController) UpdateNote(c *gin.Context) {
-	NoteID := c.Param("id")
+	NoteID := c.Param("note")
 	c.JSON(http.StatusOK, NoteID)
 }
 
 func (v NotesController) DeleteNote(c *gin.Context) {
-	NoteID := c.Param("id")
+	NoteID := c.Param("note")
 	c.JSON(http.StatusOK, NoteID)
 }
