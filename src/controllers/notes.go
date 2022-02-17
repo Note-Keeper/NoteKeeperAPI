@@ -63,11 +63,44 @@ func (v NotesController) CreateNote(c *gin.Context) {
 }
 
 func (v NotesController) UpdateNote(c *gin.Context) {
+	var req Requests.CreateNote
+
+	err := c.ShouldBindJSON(&req)
+	Helpers.PrintError(err)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
+
 	NoteID := c.Param("note")
-	c.JSON(http.StatusOK, NoteID)
+
+	Note := v.Service.UpdateNote(req, NoteID)
+
+	if Note == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid_data",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, Note)
 }
 
 func (v NotesController) DeleteNote(c *gin.Context) {
 	NoteID := c.Param("note")
-	c.JSON(http.StatusOK, NoteID)
+
+	ok := v.Service.DeleteNote(NoteID)
+
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid_data",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
 }

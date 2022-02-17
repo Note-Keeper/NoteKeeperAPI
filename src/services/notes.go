@@ -74,3 +74,37 @@ func (v NotesService) CreateNote(noteData Requests.CreateNote) *Models.Note {
 
 	return &note
 }
+
+func (v NotesService) UpdateNote(reqData Requests.CreateNote, NoteID string) *Models.Note {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ID, err := primitive.ObjectIDFromHex(NoteID)
+	Helpers.PrintError(err)
+
+	var note Models.Note
+
+	_ = NoteCollection.FindOneAndReplace(ctx, bson.M{"_id": ID}, bson.D{
+		{Key: "Title", Value: reqData.Title},
+		{Key: "Content", Value: reqData.Content},
+		{Key: "Author", Value: reqData.Author},
+	}).Decode(&note)
+
+	if err == mongo.ErrNoDocuments {
+		return nil
+	}
+
+	return &note
+}
+
+func (v NotesService) DeleteNote(NoteID string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ID, err := primitive.ObjectIDFromHex(NoteID)
+	Helpers.PrintError(err)
+
+	_, err = NoteCollection.DeleteOne(ctx, bson.M{"_id": ID})
+
+	return err == nil
+}
